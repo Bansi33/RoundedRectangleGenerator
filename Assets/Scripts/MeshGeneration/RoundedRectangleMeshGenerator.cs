@@ -45,11 +45,11 @@ namespace BanSee.RoundedRectangleGenerator
         /// size, corner roundness radius, etc.</param>
         /// <returns>Reference to the instance of the <see cref="RectangleMeshData"/> containing properties
         /// required for visually representing the rounded rectangle mesh in 3D.</returns>
-        public static RectangleMeshData GenerateRoundedRectangleMeshData(RectangleGenerationData rectangleGenerationData)
+        public static MeshData GenerateRoundedRectangleMeshData(RectangleGenerationData rectangleGenerationData)
         {
             // Generating rectangle mesh data based on the desired topology type. Generated rectangle
             // is in the X-Y plane and doesn't contain information about the third dimension.
-            RectangleMeshData rectangleMeshData;
+            MeshData rectangleMeshData;
             switch (rectangleGenerationData.TopologyType)
             {
                 case RectangleTopologyType.CenterVertexConnection:
@@ -78,7 +78,7 @@ namespace BanSee.RoundedRectangleGenerator
         /// size, corner roundness radius, etc.</param>
         /// <returns>Reference to the instance of the <see cref="RectangleMeshData"/> containing properties
         /// required for visually representing the rounded rectangle mesh in 3D.</returns>
-        private static RectangleMeshData GenerateRoundedRectangleMeshWithConnectingVertices(RectangleGenerationData rectangleGenerationData)
+        private static MeshData GenerateRoundedRectangleMeshWithConnectingVertices(RectangleGenerationData rectangleGenerationData)
         {
             float cornerRoundnessRadius = rectangleGenerationData.CornerRoundnessRadius;
             if (cornerRoundnessRadius <= 0f)
@@ -166,12 +166,7 @@ namespace BanSee.RoundedRectangleGenerator
             Vector2[] uvs = UVGenerator.GenerateUVs(rectangleGenerationData, vertices);
 
             // Generate normals.
-            Vector3[] normals = new Vector3[totalNumberOfVertices];
-            for (int i = 0; i < totalNumberOfVertices; i++)
-            {
-                // All normals point in the same direction since the mesh is in the X-Y plane.
-                normals[i] = new Vector3(0f, 0f, -1f);
-            }
+            Vector3[] normals = Utils.GenerateNormals(totalNumberOfVertices);
 
             // Generate indices.
             int[] indices = new int[totalNumberOfIndices];
@@ -224,7 +219,7 @@ namespace BanSee.RoundedRectangleGenerator
             }
 
             // Data class creation.
-            RectangleMeshData rectangleMeshData = new RectangleMeshData(rectangleGenerationData.TopologyType)
+            MeshData rectangleMeshData = new MeshData()
             {
                 Vertices = vertices,
                 Uvs = uvs,
@@ -249,7 +244,7 @@ namespace BanSee.RoundedRectangleGenerator
         /// size, corner roundness radius, etc.</param>
         /// <returns>Reference to the instance of the <see cref="RectangleMeshData"/> containing properties
         /// required for visually representing the rounded rectangle mesh in 3D.</returns>
-        private static RectangleMeshData GenerateRoundedRectangleMesh(RectangleGenerationData rectangleGenerationData)
+        private static MeshData GenerateRoundedRectangleMesh(RectangleGenerationData rectangleGenerationData)
         {
             float cornerRoundnessRadius = rectangleGenerationData.CornerRoundnessRadius;
             if (cornerRoundnessRadius <= 0f)
@@ -326,12 +321,7 @@ namespace BanSee.RoundedRectangleGenerator
             Vector2[] uvs = UVGenerator.GenerateUVs(rectangleGenerationData, vertices);
 
             // Generate normals.
-            Vector3[] normals = new Vector3[totalNumberOfVertices];
-            for (int i = 0; i < totalNumberOfVertices; i++)
-            {
-                // All normals point in the same direction since the mesh is in the X-Y plane.
-                normals[i] = new Vector3(0f, 0f, -1f);
-            }
+            Vector3[] normals = Utils.GenerateNormals(totalNumberOfVertices);
 
             // Generate indices.
             int[] indices = new int[totalNumberOfIndices];
@@ -354,7 +344,7 @@ namespace BanSee.RoundedRectangleGenerator
             }
 
             // Data class creation.
-            RectangleMeshData rectangleMeshData = new RectangleMeshData(rectangleGenerationData.TopologyType)
+            MeshData rectangleMeshData = new MeshData()
             {
                 Vertices = vertices,
                 Uvs = uvs,

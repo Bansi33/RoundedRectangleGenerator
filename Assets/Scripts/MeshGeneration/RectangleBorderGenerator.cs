@@ -12,9 +12,8 @@ namespace BanSee.RoundedRectangleGenerator
     {
         /// <summary>
         /// Function generates a 2D rectangle border around the rectangle or rounded rectangle
-        /// provided by the <paramref name="rectangleMeshData"/> by duplicating the outer edge
-        /// vertices of the rectangle and expanding them in the correct direction based on the
-        /// structure of the rectangle. 
+        /// by duplicating the outer edge vertices of the rectangle and expanding them in the 
+        /// correct direction based on the structure of the rectangle. 
         /// <br>For the regular rectangles, the vertices are being scaled by using the appropriate
         /// aspect ratio multipliers to preserve the width of the border along all edges. </br>
         /// <br>For the rounded rectangles, the vertices are being displaced along vector that 
@@ -23,32 +22,26 @@ namespace BanSee.RoundedRectangleGenerator
         /// </summary>
         /// <param name="rectangleGenerationData">Reference to the class containing options for 
         /// generation of the rectangle mesh.</param>
-        /// <param name="rectangleMeshData">Reference to the class containing generated 2D rectangle
-        /// mesh properties that will be used to generate the correct border.</param>
+        /// <param name="rectangleBorderGenerationData">Reference to the class containing options
+        /// for generation of the rectangle border mesh.</param>
         /// <returns>Reference to the <see cref="MeshData"/> class containing properties for 
         /// generating the mesh of the border that surrounds the rectangle with perfect width
         /// and corner radius preservation.</returns>
-        public static MeshData GenerateBorder(RectangleGenerationData rectangleGenerationData, 
-            RectangleMeshData rectangleMeshData)
+        public static MeshData GenerateBorder(RectangleGenerationData rectangleGenerationData,
+            RectangleBorderGenerationData rectangleBorderGenerationData)
         {
-            Vector3[] rectangleVertices = rectangleMeshData.Vertices;
-            int totalNumberOfVertices = rectangleVertices.Length;
-            int numberOfInnerVertices = rectangleMeshData.NumberOfInnerVertices;
-            int numberOfOuterVertices = totalNumberOfVertices - numberOfInnerVertices;
+            int numberOfOuterVertices = Utils.GetNumberOfFrontFaceOuterVertices(rectangleGenerationData);
             int totalNumberOfBorderVertices = numberOfOuterVertices * 2;
 
             // Generating vertices based on the outer edge of the rectangle and adding
             // additional outer layer of vertices that are offset by the border thickness.
-            Vector3[] borderVertices = GenerateOuterVerticesPositions(rectangleMeshData, rectangleGenerationData);
+            Vector3[] borderVertices = GenerateOuterVerticesPositions(rectangleGenerationData, rectangleBorderGenerationData);
 
             // All normals should be the same as for the original rectangle.
-            Vector3[] rectangleNormals = rectangleMeshData.Normals;
             Vector3[] borderNormals = new Vector3[totalNumberOfBorderVertices];
-            for(int i = 0; i < numberOfOuterVertices; i++)
+            for(int i = 0; i < totalNumberOfBorderVertices; i++)
             {
-                Vector3 originalNormal = rectangleNormals[i + numberOfInnerVertices];
-                borderNormals[i] = originalNormal;
-                borderNormals[i + numberOfOuterVertices] = originalNormal;
+                borderNormals[i] = Utils.RECTANGLE_NORMAL;
             }
 
             /// Generating UV coordinates.
@@ -80,13 +73,15 @@ namespace BanSee.RoundedRectangleGenerator
             };
         }
 
-        private static Vector3[] GenerateOuterVerticesPositions(RectangleMeshData rectangleMeshData, 
-            RectangleGenerationData rectangleGenerationData)
+        private static Vector3[] GenerateOuterVerticesPositions(RectangleGenerationData rectangleGenerationData,
+            RectangleBorderGenerationData rectangleBorderGenerationData)
         {
+            // Generating rectangle data that will be used to generate the border.
+            MeshData rectangleMeshData = RectangleMeshGenerator.GenerateRectangleMeshData(rectangleGenerationData);
             Vector3[] rectangleVertices = rectangleMeshData.Vertices;
-            int totalNumberOfVertices = rectangleVertices.Length;
-            int numberOfInnerVertices = rectangleMeshData.NumberOfInnerVertices;
-            int numberOfOuterVertices = totalNumberOfVertices - numberOfInnerVertices;
+
+            int numberOfInnerVertices = Utils.GetNumberOfFrontFaceInnerVertices(rectangleGenerationData);
+            int numberOfOuterVertices = Utils.GetNumberOfFrontFaceOuterVertices(rectangleGenerationData);
             int totalNumberOfBorderVertices = numberOfOuterVertices * 2;
             Vector3[] borderVertices = new Vector3[totalNumberOfBorderVertices];
 
@@ -113,25 +108,11 @@ namespace BanSee.RoundedRectangleGenerator
 
                     Vector3 centerToVertexDirection = (originalOuterVertex - roundnessCenter).normalized;
                     borderVertices[i] = originalOuterVertex;
-                    borderVertices[i + numberOfOuterVertices] = roundnessCenter + centerToVertexDirection * (cornerRoundnessRadius + rectangleGenerationData.BorderThickness);
+                    borderVertices[i + numberOfOuterVertices] = roundnessCenter + centerToVertexDirection * (cornerRoundnessRadius + rectangleBorderGenerationData.BorderThickness);
                 }
             }
             else
             {
-                // Calculating aspect ratio of the rectangle, that will be used in offsetting 
-                // outer border vertices to maintain a correct border thickness.
-                float aspectRatioMultiplierX = 1f;
-                float aspectRatioMultiplierY = 1f;
-
-                if (width > height)
-                {
-                    aspectRatioMultiplierX = height / width;
-                }
-                else
-                {
-                    aspectRatioMultiplierY = width / height;
-                }
-
                 // Regular rectangles can create outer border vertices just by multiplying
                 // the current vertex positions with border thickness.
                 for (int i = 0; i < numberOfOuterVertices; i++)
@@ -139,8 +120,8 @@ namespace BanSee.RoundedRectangleGenerator
                     Vector3 originalOuterVertex = rectangleVertices[i + numberOfInnerVertices];
                     borderVertices[i] = originalOuterVertex;
                     borderVertices[i + numberOfOuterVertices] = new Vector3(
-                        originalOuterVertex.x * (1.0f + rectangleGenerationData.BorderThickness * aspectRatioMultiplierX),
-                        originalOuterVertex.y * (1.0f + rectangleGenerationData.BorderThickness * aspectRatioMultiplierY),
+                        originalOuterVertex.x + Mathf.Sign(originalOuterVertex.x) * rectangleBorderGenerationData.BorderThickness,
+                        originalOuterVertex.y + Mathf.Sign(originalOuterVertex.y) * rectangleBorderGenerationData.BorderThickness,
                         originalOuterVertex.z);
                 }
             }

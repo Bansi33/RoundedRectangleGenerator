@@ -5,18 +5,18 @@ namespace BanSee.RoundedRectangleGenerator
 {
     /// <summary>
     /// Custom editor class for generating inspector look of the 
-    /// <see cref="RoundedRectangleGenerator"/> component.
+    /// <see cref="RectangleGenerationExample"/> component.
     /// </summary>
-    [CustomEditor(typeof(RoundedRectangleGenerator))]
-    public class RoundedRectangleGeneratorEditor : Editor
+    [CustomEditor(typeof(RectangleGenerationExample))]
+    public class RectangleGenerationExampleEditor : Editor
     {
         private const float SPACE_BETWEEN_CATEGORIES = 20f;
 
-        private RoundedRectangleGenerator _roundedRectangleGenerator = null;
+        private RectangleGenerationExample _roundedRectangleGenerator = null;
 
         private void OnEnable()
         {
-            _roundedRectangleGenerator = (RoundedRectangleGenerator)target;
+            _roundedRectangleGenerator = (RectangleGenerationExample)target;
         }
 
         /// <inheritdoc/>
@@ -40,9 +40,29 @@ namespace BanSee.RoundedRectangleGenerator
             EditorGUILayout.Space(SPACE_BETWEEN_CATEGORIES);
             EditorGUI.BeginDisabledGroup(!isDataValidForGeneration);
 
-            if (GUILayout.Button(nameof(_roundedRectangleGenerator.GenerateRoundedRectangle)))
+            if (GUILayout.Button(nameof(_roundedRectangleGenerator.GenerateRectangle)))
             {
-                _roundedRectangleGenerator.GenerateRoundedRectangle();
+                _roundedRectangleGenerator.GenerateRectangle();
+            }
+
+            EditorGUI.EndDisabledGroup();
+
+            RectangleBorderGenerationData rectangleBorderGenerationData = _roundedRectangleGenerator.RectangleBorderGenerationData;
+            isDataValidForGeneration = rectangleBorderGenerationData.IsDataValid();
+            if (!isDataValidForGeneration)
+            {
+                // If the data isn't valid for generation of the rectangle border, write out the
+                // message informing the user why the generation isn't currently possible.
+                EditorGUILayout.Space(SPACE_BETWEEN_CATEGORIES);
+                EditorGUILayout.HelpBox(rectangleBorderGenerationData.ValidationErrorMessage, MessageType.Error);
+            }
+
+            // Drawing area with buttons for generation of rectangle border.
+            EditorGUI.BeginDisabledGroup(!isDataValidForGeneration);
+
+            if (GUILayout.Button(nameof(_roundedRectangleGenerator.GenerateRectangleBorder)))
+            {
+                _roundedRectangleGenerator.GenerateRectangleBorder();
             }
 
             EditorGUI.EndDisabledGroup();

@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Unity.Mathematics;
+using UnityEngine;
 
 namespace BanSee.RoundedRectangleGenerator
 {
@@ -47,15 +48,6 @@ namespace BanSee.RoundedRectangleGenerator
             float width = rectangleGenerationData.Width;
             float height = rectangleGenerationData.Height;
 
-            // If the rectangle contains border, adjust the maximum spread of the UV
-            // coordinates so that the border is also included on the same UV map.
-            if (rectangleGenerationData.HasBorder)
-            {
-                float doubleBorderThickness = 2.0f * rectangleGenerationData.BorderThickness;
-                width += doubleBorderThickness;
-                height += doubleBorderThickness;
-            }
-
             if (width > height)
             {
                 aspectRatioMultiplierY = height / width;
@@ -74,12 +66,6 @@ namespace BanSee.RoundedRectangleGenerator
             float width = rectangleGenerationData.Width;
             float height = rectangleGenerationData.Height;
 
-            if (rectangleGenerationData.HasBorder)
-            {
-                width += 2.0f * rectangleGenerationData.BorderThickness;
-                height += 2.0f * rectangleGenerationData.BorderThickness;
-            }
-
             int totalNumberOfVertices = vertices.Length;
             Vector2[] uvs = new Vector2[totalNumberOfVertices];
 
@@ -89,8 +75,10 @@ namespace BanSee.RoundedRectangleGenerator
                 // UV coordinates start from the bottom left corner (0,0)
                 // and go to (1,1) in the top right corner.
                 Vector3 vertex = vertices[i];
-                float uvX = Mathf.InverseLerp(-width * 0.5f, width * 0.5f, vertex.x) * aspectRatioMultiplierX + 0.5f * (1.0f - aspectRatioMultiplierX);
-                float uvY = Mathf.InverseLerp(-height * 0.5f, height * 0.5f, vertex.y) * aspectRatioMultiplierY + 0.5f * (1.0f - aspectRatioMultiplierY);
+                float uvX = aspectRatioMultiplierX * (vertex.x / width) + 0.5f;
+                float uvY = aspectRatioMultiplierY * (vertex.y / height) + 0.5f;
+                //float uvX = Mathf.InverseLerp(-width * 0.5f, width * 0.5f, vertex.x) * aspectRatioMultiplierX + 0.5f * (1.0f - aspectRatioMultiplierX);
+                //float uvY = Mathf.InverseLerp(-height * 0.5f, height * 0.5f, vertex.y) * aspectRatioMultiplierY + 0.5f * (1.0f - aspectRatioMultiplierY);
                 uvs[i] = new Vector2(uvX, uvY);
             }
 
