@@ -11,8 +11,31 @@ namespace BanSee.RoundedRectangleGenerator
     [Serializable]
     public class RectangleGenerationData : ValidatableData
     {
-        private const float MIN_CORNER_ROUNDNESS_PERCENTAGE = 0f;
-        private const float MAX_CORNER_ROUNDNESS_PERCENTAGE = 0.5f;
+        /// <summary>
+        /// Minimal percentage available for the roundness of the rectangle corners.
+        /// If the roundness is set to this value, the rectangle will be a regular one.
+        /// </summary>
+        public const float MIN_CORNER_ROUNDNESS_PERCENTAGE = 0f;
+        /// <summary>
+        /// Maximum available percentage for the roundness of the rectangle corners.
+        /// If roundness is set to this value, the whole smaller dimension of the rectangle
+        /// will be constructing a rounded corner.
+        /// </summary>
+        public const float MAX_CORNER_ROUNDNESS_PERCENTAGE = 0.5f;
+        /// <summary>
+        /// Minimal number of vertices for constructing a rounded rectangle. If set to this value,
+        /// the rounded corner will just be a line connection between side edges.
+        /// </summary>
+        public const int MIN_ROUNDED_CORNER_VERTEX_COUNT = 0;
+        /// <summary>
+        /// Maximum number of vertices for constructing a rounded rectangle. Increase this value
+        /// if you need a crazy smooth rounded corners.
+        /// </summary>
+        public const int MAX_ROUNDED_CORNER_VERTEX_COUNT = 64;
+        /// <summary>
+        /// Minimum size of a certain rectangle dimension.
+        /// </summary>
+        public const float MIN_RECTANGLE_SIZE = 0.001f;
         
         public float Width;
         public float Height;
@@ -25,7 +48,7 @@ namespace BanSee.RoundedRectangleGenerator
         public int CornerVertexCount;
 
         public UVGenerationMode UvMode;
-        [SerializeField] private RectangleTopologyType _topologyType;
+        [SerializeField] private RectangleTopologyType _topologyType = RectangleTopologyType.CenterVertexConnection;
 
         /// <summary>
         /// Property returning the smaller dimension of the rectangle.
@@ -44,11 +67,14 @@ namespace BanSee.RoundedRectangleGenerator
             }
         }
         /// <summary>
-        /// Property specifying the topology type of the rectangle.
+        /// Property checks if the rectangle is a simple rectangle (no rounded corners)
+        /// or if the rectangle is an NGon (rectangle with max corner roundness and both
+        /// dimensions of the same value) and returns true if any of these conditions are
+        /// satisfied.
         /// </summary>
-        public RectangleTopologyType TopologyType 
-        { 
-            get 
+        public bool MustRectangleUseCenterVertexConnection
+        {
+            get
             {
                 // In case the rectangle is actually a square and the roundness is set to maximum,
                 // we're actually talking about a circle, or a polygon (hexagon, octagon, ...) which
@@ -60,14 +86,36 @@ namespace BanSee.RoundedRectangleGenerator
                 // Simple rectangles don't have corner roundness, they don't need additional corner vertex connections.
                 bool isSimpleRectangle = !IsRoundedRectangle;
 
-                if (isNGon || isSimpleRectangle)
-                {                    
+                return isNGon || isSimpleRectangle;
+            }
+        }
+        /// <summary>
+        /// Property specifying the topology type of the rectangle.
+        /// </summary>
+        public RectangleTopologyType TopologyType 
+        { 
+            get 
+            {
+                if (MustRectangleUseCenterVertexConnection)
+                {
                     _topologyType = RectangleTopologyType.CenterVertexConnection;
                 }
 
-                return _topologyType; 
-            } 
+                return _topologyType;
+            }
+            set
+            {
+                if (MustRectangleUseCenterVertexConnection)
+                {
+                    _topologyType = RectangleTopologyType.CenterVertexConnection;
+                }
+                else
+                {
+                    _topologyType = value;
+                }                
+            }
         }
+
         /// <summary>
         /// Rectangle is a rounded rectangle if it has a corner roundness radius 
         /// greater than zero. Number of corner vertices doesn't matter, it only
@@ -87,7 +135,7 @@ namespace BanSee.RoundedRectangleGenerator
             CornerVertexCount = 0;
 
             UvMode = UVGenerationMode.AspectRatioFit;
-            _topologyType = RectangleTopologyType.CenterVertexConnection;
+            TopologyType = RectangleTopologyType.CenterVertexConnection;
         }
 
         public RectangleGenerationData(RectangleGenerationData source)
@@ -102,7 +150,35 @@ namespace BanSee.RoundedRectangleGenerator
             CornerVertexCount = source.CornerVertexCount;
 
             UvMode = source.UvMode;
-            _topologyType = source.TopologyType;
+            TopologyType = source.TopologyType;
+        }
+
+        /// <inheritdoc/>
+        public override bool Equals(object obj)
+        {
+            if(obj == null)
+            {
+                return false;
+            }
+
+            if(obj is not RectangleGenerationData)
+            {
+                return false;
+            }
+
+            RectangleGenerationData other = (RectangleGenerationData)obj;
+            return Width == other.Width && Height == other.Height && 
+                Is3D == other.Is3D && Depth == other.Depth && 
+                CornerRoundnessPercentage == other.CornerRoundnessPercentage &&
+                CornerVertexCount == other.CornerVertexCount &&
+                UvMode == other.UvMode &&
+                TopologyType == other.TopologyType;
+        }
+
+        /// <inheritdoc/>
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
         }
 
         /// <inheritdoc/>

@@ -72,13 +72,6 @@ namespace BanSee.RoundedRectangleGenerator
             }
 
             MeshData rectangleMeshData = RectangleMeshGenerator.GenerateRectangleMeshData(_rectangleGenerationData);
-
-            // In case the request is for a 3D rectangle, solidify the mesh with third dimension.
-            if (_rectangleGenerationData.Is3D && _rectangleGenerationData.Depth > 0f)
-            {
-                MeshSolidify.SolidifyRectangle(rectangleMeshData, _rectangleGenerationData);
-            }
-
             return Utils.CreateMeshFromMeshData(rectangleMeshData);            
         }
 
@@ -91,12 +84,7 @@ namespace BanSee.RoundedRectangleGenerator
             }
 
             MeshData borderMeshData = RectangleBorderGenerator.GenerateBorder(_rectangleGenerationData,
-                _rectangleBorderGenerationData);
-            if (_rectangleGenerationData.Is3D && _rectangleGenerationData.Depth > 0f)
-            {
-                MeshSolidify.SolidifyRectangleBorder(borderMeshData, _rectangleGenerationData,
-                    _rectangleBorderGenerationData);
-            }
+                _rectangleBorderGenerationData);            
             return Utils.CreateMeshFromMeshData(borderMeshData);
         }
 

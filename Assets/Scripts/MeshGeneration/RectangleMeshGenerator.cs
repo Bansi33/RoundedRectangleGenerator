@@ -31,6 +31,12 @@
                 rectangleMeshData = SimpleRectangleMeshGenerator.GenerateRectangleMeshData(rectangleGenerationData);
             }
 
+            // In case the request is for a 3D rectangle, solidify the mesh with third dimension.
+            if (rectangleGenerationData.Is3D && rectangleGenerationData.Depth > 0f)
+            {
+                MeshSolidify.SolidifyRectangle(rectangleMeshData, rectangleGenerationData);
+            }
+
             return rectangleMeshData;
         }
     }

@@ -8,6 +8,12 @@ namespace BanSee.RoundedRectangleGenerator
     [Serializable]
     public class RectangleBorderGenerationData : ValidatableData
     {
+        /// <summary>
+        /// Minimum border thickness allowed for the border to be visible and 
+        /// correctly generated.
+        /// </summary>
+        public const float MIN_BORDER_THICKNESS = 0.001f;
+
         public float BorderThickness;
         public float BorderAdditionalDepth;
 
@@ -21,6 +27,30 @@ namespace BanSee.RoundedRectangleGenerator
         {
             BorderThickness = source.BorderThickness;
             BorderAdditionalDepth = source.BorderAdditionalDepth;
+        }
+
+        /// <inheritdoc/>
+        public override bool Equals(object obj)
+        {
+            if (obj == null)
+            {
+                return false;
+            }
+
+            if (obj is not RectangleBorderGenerationData)
+            {
+                return false;
+            }
+
+            RectangleBorderGenerationData other = (RectangleBorderGenerationData)obj;
+            return BorderThickness == other.BorderThickness &&
+                BorderAdditionalDepth == other.BorderAdditionalDepth;
+        }
+
+        /// <inheritdoc/>
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
         }
 
         /// <inheritdoc/>

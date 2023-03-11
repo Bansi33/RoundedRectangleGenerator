@@ -64,13 +64,22 @@ namespace BanSee.RoundedRectangleGenerator
                 borderIndices[i * 6 + 5] = nextOuterVertexIndex;
             }
 
-            return new MeshData
+            MeshData borderMeshData =  new MeshData
             {
                 Vertices = borderVertices,
                 Normals = borderNormals,
                 Uvs = borderUvs,
                 Triangles = borderIndices
             };
+
+            // In case of 3D rectangle, generate 3D rectangle border.
+            if (rectangleGenerationData.Is3D && rectangleGenerationData.Depth > 0f)
+            {
+                MeshSolidify.SolidifyRectangleBorder(borderMeshData, rectangleGenerationData,
+                    rectangleBorderGenerationData);
+            }
+
+            return borderMeshData;
         }
 
         private static Vector3[] GenerateOuterVerticesPositions(RectangleGenerationData rectangleGenerationData,
@@ -100,7 +109,11 @@ namespace BanSee.RoundedRectangleGenerator
                 // by the border thickness.
                 for (int i = 0; i < numberOfOuterVertices; i++)
                 {
+                    // Making sure that were getting positions without the depth offset which
+                    // would happen if the rectangle is 3D.
                     Vector3 originalOuterVertex = rectangleVertices[i + numberOfInnerVertices];
+                    originalOuterVertex.z = 0f;
+
                     Vector3 roundnessCenter = new Vector3(
                         Mathf.Sign(originalOuterVertex.x) * a, 
                         Mathf.Sign(originalOuterVertex.y) * b, 
@@ -117,7 +130,11 @@ namespace BanSee.RoundedRectangleGenerator
                 // the current vertex positions with border thickness.
                 for (int i = 0; i < numberOfOuterVertices; i++)
                 {
+                    // Making sure that were getting positions without the depth offset which
+                    // would happen if the rectangle is 3D.
                     Vector3 originalOuterVertex = rectangleVertices[i + numberOfInnerVertices];
+                    originalOuterVertex.z = 0f;
+
                     borderVertices[i] = originalOuterVertex;
                     borderVertices[i + numberOfOuterVertices] = new Vector3(
                         originalOuterVertex.x + Mathf.Sign(originalOuterVertex.x) * rectangleBorderGenerationData.BorderThickness,
