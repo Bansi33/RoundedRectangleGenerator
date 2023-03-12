@@ -69,7 +69,7 @@ namespace BanSee.RoundedRectangleGenerator
 
             // All normals of the rectangle pointing in the same direction since it's 
             // a 2D mesh representation (X-Y plane).
-            rectangleMeshData.Normals = Utils.GenerateNormals(totalNumberOfVertices);
+            rectangleMeshData.Normals = RectangleMeshUtils.GenerateNormals(totalNumberOfVertices);
 
             // 4 triangles are generated to form the rectangle mesh. All triangles
             // consist of two corner vertices and the center vertex.

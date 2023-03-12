@@ -166,7 +166,7 @@ namespace BanSee.RoundedRectangleGenerator
             Vector2[] uvs = UVGenerator.GenerateUVs(rectangleGenerationData, vertices);
 
             // Generate normals.
-            Vector3[] normals = Utils.GenerateNormals(totalNumberOfVertices);
+            Vector3[] normals = RectangleMeshUtils.GenerateNormals(totalNumberOfVertices);
 
             // Generate indices.
             int[] indices = new int[totalNumberOfIndices];
@@ -321,7 +321,7 @@ namespace BanSee.RoundedRectangleGenerator
             Vector2[] uvs = UVGenerator.GenerateUVs(rectangleGenerationData, vertices);
 
             // Generate normals.
-            Vector3[] normals = Utils.GenerateNormals(totalNumberOfVertices);
+            Vector3[] normals = RectangleMeshUtils.GenerateNormals(totalNumberOfVertices);
 
             // Generate indices.
             int[] indices = new int[totalNumberOfIndices];

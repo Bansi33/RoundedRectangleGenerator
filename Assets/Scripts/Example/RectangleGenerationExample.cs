@@ -4,7 +4,7 @@ namespace BanSee.RoundedRectangleGenerator
 {
     /// <summary>
     /// Component used to display the <see cref="RectangleGenerationData"/> properties
-    /// in the inspector and provide an example of rounded rectangle generation.
+    /// in the inspector and provide an example of rounded rectangle generation via code.
     /// </summary>
     public class RectangleGenerationExample : MonoBehaviour
     {
@@ -44,7 +44,7 @@ namespace BanSee.RoundedRectangleGenerator
             }
 
             DestroyInstance(_rectangleInstance);
-            _rectangleInstance = Utils.CreateMeshVisualizer(rectangleMesh, "Rectangle", _roundedRectangleMaterial);
+            _rectangleInstance = RectangleCreationUtility.CreateMeshVisualizer(rectangleMesh, "Rectangle", _roundedRectangleMaterial);
         }
 
         /// <summary>
@@ -61,31 +61,19 @@ namespace BanSee.RoundedRectangleGenerator
             }
 
             DestroyInstance(_borderInstance);
-            _borderInstance = Utils.CreateMeshVisualizer(rectangleBorderMesh, "Rectangle Border", _rectangleBorderMaterial);
+            _borderInstance = RectangleCreationUtility.CreateMeshVisualizer(rectangleBorderMesh, "Rectangle Border", _rectangleBorderMaterial);
         }
 
         private Mesh GenerateRoundedRectangleMesh()
         {
-            if (!_rectangleGenerationData.IsDataValid())
-            {                
-                return null;
-            }
-
             MeshData rectangleMeshData = RectangleMeshGenerator.GenerateRectangleMeshData(_rectangleGenerationData);
-            return Utils.CreateMeshFromMeshData(rectangleMeshData);            
+            return RectangleCreationUtility.CreateMeshFromMeshData(rectangleMeshData);            
         }
 
         private Mesh GenerateRectangleBorderMesh()
         {
-            if (!_rectangleBorderGenerationData.IsDataValid() ||
-                !_rectangleGenerationData.IsDataValid())
-            {
-                return null;
-            }
-
-            MeshData borderMeshData = RectangleBorderGenerator.GenerateBorder(_rectangleGenerationData,
-                _rectangleBorderGenerationData);            
-            return Utils.CreateMeshFromMeshData(borderMeshData);
+            MeshData borderMeshData = RectangleBorderMeshGenerator.GenerateBorder(_rectangleGenerationData, _rectangleBorderGenerationData);            
+            return RectangleCreationUtility.CreateMeshFromMeshData(borderMeshData);
         }
 
         private void DestroyInstance(GameObject instance)

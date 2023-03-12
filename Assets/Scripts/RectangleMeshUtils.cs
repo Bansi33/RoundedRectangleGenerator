@@ -6,7 +6,7 @@ namespace BanSee.RoundedRectangleGenerator
     /// Static class containing utility functions useful when creating rectangle meshes
     /// and borders surrounding them.
     /// </summary>
-    public static class Utils
+    public static class RectangleMeshUtils
     {
         /// <summary>
         /// Predefined normal orientation that all generated rectangles share.
@@ -105,48 +105,6 @@ namespace BanSee.RoundedRectangleGenerator
                 normals[i] = RECTANGLE_NORMAL;
             }
             return normals;
-        }
-
-        /// <summary>
-        /// Function creates a new instance of the <see cref="Mesh"/> class and
-        /// populates it with the data from the provided <paramref name="meshData"/>.
-        /// It also recalculates bounds of the mesh and returns the created instance.
-        /// </summary>
-        /// <param name="meshData">Reference to the <see cref="MeshData"/> class 
-        /// containing information about vertices, triangles, normals and UV coordinates
-        /// of the mesh.</param>
-        /// <returns>Instance of the mesh with applied settings from the provided
-        /// <paramref name="meshData"/>.</returns>
-        public static Mesh CreateMeshFromMeshData(MeshData meshData)
-        {
-            Mesh mesh = new Mesh();
-            meshData.ApplyToMesh(ref mesh);
-            mesh.RecalculateBounds();
-            return mesh;
-        }
-
-        /// <summary>
-        /// Function creates a new game object and assigns a <see cref="MeshFilter"/>
-        /// component and a <see cref="MeshRenderer"/> component to it in order to represent
-        /// the provided <paramref name="mesh"/>.
-        /// </summary>
-        /// <param name="mesh">Reference to the <see cref="Mesh"/> instance that will
-        /// be visualized on a new game object.</param>
-        /// <param name="name">Name that will be assigned to the created game object.</param>
-        /// <param name="material">Material that will be assigned to visually represent
-        /// the mesh on a <see cref="MeshRenderer"/>. NOTE - material won't be instanced, meaning
-        /// that it will be assigned to the <see cref="MeshRenderer.sharedMaterial"/> slot.</param>
-        /// <returns>Reference to the instantiated game object.</returns>
-        public static GameObject CreateMeshVisualizer(Mesh mesh, string name, Material material)
-        {
-            GameObject meshHolderGameObject = new GameObject(name);
-            MeshFilter meshFilter = meshHolderGameObject.AddComponent<MeshFilter>();
-            meshFilter.sharedMesh = mesh;
-
-            MeshRenderer meshRenderer = meshHolderGameObject.AddComponent<MeshRenderer>();
-            meshRenderer.sharedMaterial = material;
-
-            return meshHolderGameObject;
         }
     }
 }

@@ -21,8 +21,8 @@ namespace BanSee.RoundedRectangleGenerator
         {
             // Simple rectangle contains one inner vertex and 4 outer vertices.
             int originalFrontFaceVerticesCount = rectangleMeshData.Vertices.Length;
-            int numberOfFrontFaceInnerVertices = Utils.GetNumberOfFrontFaceInnerVertices(rectangleGenerationData);
-            int numberOfFrontFaceOuterVertices = Utils.GetNumberOfFrontFaceOuterVertices(rectangleGenerationData);
+            int numberOfFrontFaceInnerVertices = RectangleMeshUtils.GetNumberOfFrontFaceInnerVertices(rectangleGenerationData);
+            int numberOfFrontFaceOuterVertices = RectangleMeshUtils.GetNumberOfFrontFaceOuterVertices(rectangleGenerationData);
 
             // Every original outer vertex needs to be duplicated in order to hold 2 normals, one for each connecting side.
             int numberOfConnectingOuterVertices = numberOfFrontFaceOuterVertices * 2;
@@ -175,8 +175,8 @@ namespace BanSee.RoundedRectangleGenerator
             for (int i = 0; i < originalFrontFaceVerticesCount; i++)
             {
                 // Front and back face normals.
-                normals[i] = Utils.RECTANGLE_NORMAL;
-                normals[i + extendedFrontFaceVerticesCount] = -Utils.RECTANGLE_NORMAL;
+                normals[i] = RectangleMeshUtils.RECTANGLE_NORMAL;
+                normals[i + extendedFrontFaceVerticesCount] = -RectangleMeshUtils.RECTANGLE_NORMAL;
 
                 // Outer vertices duplication and normal direction.
                 if (i >= numberOfFrontFaceInnerVertices)
@@ -229,8 +229,8 @@ namespace BanSee.RoundedRectangleGenerator
                 float normalDirectionMultiplier = i < numberOfFrontFaceInnerVertices ? -1.0f : 1.0f;
 
                 // Copy the front face normals to the back face and invert them.
-                normals[i] = Utils.RECTANGLE_NORMAL;
-                normals[i + extendedFrontFaceVerticesCount] = -Utils.RECTANGLE_NORMAL;
+                normals[i] = RectangleMeshUtils.RECTANGLE_NORMAL;
+                normals[i + extendedFrontFaceVerticesCount] = -RectangleMeshUtils.RECTANGLE_NORMAL;
 
                 int frontFaceVertexIndexOffset = originalFrontFaceVerticesCount + numberOfCompletedBorderEdges;
                 // Front face vertex normals assignment.

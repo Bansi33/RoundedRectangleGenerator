@@ -119,15 +119,19 @@ namespace BanSee.RoundedRectangleGenerator
             DisplayMeshGenerationProperties();
             GUILayout.Space(SPACE_BETWEEN_CATEGORIES);
 
-            // Border generation options (size, additional depth, etc.)
+            // Border generation options (size, additional depth, etc.).
             DisplayBorderGenerationProperties();
-            GUILayout.Space(SPACE_BETWEEN_CATEGORIES);            
+            GUILayout.Space(SPACE_BETWEEN_CATEGORIES);
+
+            // Display visualization options (material selection, etc.).
+            DisplayVisualizationProperties();
+            GUILayout.Space(SPACE_BETWEEN_CATEGORIES);
 
             GUILayout.EndScrollView();
             GUILayout.Space(SPACE_BETWEEN_CATEGORIES);
 
             // Options for automatic or manual creating/updating of the rectangle and border.
-            DisplayVisualizationProperties();
+            DisplayFooterProperties();
         }
 
         private void DisplayDimensionsExplainImage()
@@ -292,6 +296,13 @@ namespace BanSee.RoundedRectangleGenerator
                 _rectangleBorderMaterial = (Material)EditorGUILayout.ObjectField("Border Material", _rectangleBorderMaterial, typeof(Material), false);
             }
 
+            GUILayout.EndVertical();
+        }
+
+        private void DisplayFooterProperties()
+        {
+            GUILayout.BeginVertical(BackgroundGUIStyle);
+
             _automaticUpdate = DisplayLabeledToggle("Automatic Update", _automaticUpdate);
 
             bool shouldRegenerateRectangle = ShouldCreateOrUpdateRectangle();
@@ -338,6 +349,20 @@ namespace BanSee.RoundedRectangleGenerator
                 _instancedBorderGenerationData = null;
                 _instancedBorderMaterial = null;
             }
+
+            EditorGUI.BeginDisabledGroup(_rectangleInstance == null);
+            if (GUILayout.Button("Save Rectangle Mesh"))
+            {
+                RectangleCreationUtility.SaveMeshAsAsset(_rectangleInstance.GetComponent<MeshFilter>().sharedMesh, "Rectangle");
+            }
+            EditorGUI.EndDisabledGroup();
+
+            EditorGUI.BeginDisabledGroup(_rectangleBorderInstance == null);
+            if (GUILayout.Button("Save Border Mesh"))
+            {
+                RectangleCreationUtility.SaveMeshAsAsset(_rectangleBorderInstance.GetComponent<MeshFilter>().sharedMesh, "Border");
+            }
+            EditorGUI.EndDisabledGroup();
 
             GUILayout.EndVertical();
         }
@@ -404,8 +429,8 @@ namespace BanSee.RoundedRectangleGenerator
             }
 
             MeshData rectangleMeshData = RectangleMeshGenerator.GenerateRectangleMeshData(RectangleGenerationData);
-            Mesh rectangleMesh = Utils.CreateMeshFromMeshData(rectangleMeshData);
-            _rectangleInstance = Utils.CreateMeshVisualizer(rectangleMesh, "Rectangle", _rectangleMaterial);
+            Mesh rectangleMesh = RectangleCreationUtility.CreateMeshFromMeshData(rectangleMeshData);
+            _rectangleInstance = RectangleCreationUtility.CreateMeshVisualizer(rectangleMesh, "Rectangle", _rectangleMaterial);
             _instancedRectangleGenerationData = new RectangleGenerationData(RectangleGenerationData);
             _instancedRectangleMaterial = _rectangleMaterial;
         }
@@ -417,9 +442,9 @@ namespace BanSee.RoundedRectangleGenerator
                 DestroyImmediate(_rectangleBorderInstance);
             }
 
-            MeshData borderMeshData = RectangleBorderGenerator.GenerateBorder(RectangleGenerationData, RectangleBorderGenerationData);
-            Mesh rectangleBorderMesh = Utils.CreateMeshFromMeshData(borderMeshData);
-            _rectangleBorderInstance = Utils.CreateMeshVisualizer(rectangleBorderMesh, "Rectangle Border", _rectangleBorderMaterial);
+            MeshData borderMeshData = RectangleBorderMeshGenerator.GenerateBorder(RectangleGenerationData, RectangleBorderGenerationData);
+            Mesh rectangleBorderMesh = RectangleCreationUtility.CreateMeshFromMeshData(borderMeshData);
+            _rectangleBorderInstance = RectangleCreationUtility.CreateMeshVisualizer(rectangleBorderMesh, "Rectangle Border", _rectangleBorderMaterial);
             _instancedBorderGenerationData = new RectangleBorderGenerationData(RectangleBorderGenerationData);
             _instancedBorderMaterial = _rectangleBorderMaterial;
         }

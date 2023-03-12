@@ -1,4 +1,5 @@
 using System;
+using UnityEngine;
 
 namespace BanSee.RoundedRectangleGenerator
 {
@@ -43,8 +44,8 @@ namespace BanSee.RoundedRectangleGenerator
             }
 
             RectangleBorderGenerationData other = (RectangleBorderGenerationData)obj;
-            return BorderThickness == other.BorderThickness &&
-                BorderAdditionalDepth == other.BorderAdditionalDepth;
+            return Mathf.Approximately(BorderThickness, other.BorderThickness) &&
+                Mathf.Approximately(BorderAdditionalDepth, other.BorderAdditionalDepth);
         }
 
         /// <inheritdoc/>
@@ -59,6 +60,12 @@ namespace BanSee.RoundedRectangleGenerator
             if (BorderThickness <= 0f)
             {
                 AppendErrorMessage($"When generating border, the border needs to have thickness larger than 0.");
+            }
+
+            if (BorderAdditionalDepth < 0f)
+            {
+                AppendErrorMessage($"When generating border, the additional depth of the border " +
+                    $"needs to be larger or equal than 0.");
             }
         }
     }

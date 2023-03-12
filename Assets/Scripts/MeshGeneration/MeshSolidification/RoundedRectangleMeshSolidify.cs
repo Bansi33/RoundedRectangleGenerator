@@ -10,8 +10,8 @@ namespace BanSee.RoundedRectangleGenerator
         private static void SolidifyRoundedRectangle(RectangleGenerationData rectangleGenerationData, MeshData rectangleMeshData)
         {
             int originalVerticesCount = rectangleMeshData.Vertices.Length;
-            int numberOfFrontFaceInnerVertices = Utils.GetNumberOfFrontFaceInnerVertices(rectangleGenerationData);
-            int numberOfFrontFaceOuterVertices = Utils.GetNumberOfFrontFaceOuterVertices(rectangleGenerationData);
+            int numberOfFrontFaceInnerVertices = RectangleMeshUtils.GetNumberOfFrontFaceInnerVertices(rectangleGenerationData);
+            int numberOfFrontFaceOuterVertices = RectangleMeshUtils.GetNumberOfFrontFaceOuterVertices(rectangleGenerationData);
 
             // Duplicating front face outer vertices so that they could have separate normals and 
             // provide correct shading of the connecting triangles.
@@ -367,8 +367,8 @@ namespace BanSee.RoundedRectangleGenerator
             for (int i = 0; i < totalNumberOfFrontFaceVertices; i++)
             {
                 // Front face original vertices, use predefined normals and invert them for back faces.
-                normals[i] = Utils.RECTANGLE_NORMAL;
-                normals[i + totalNumberOfFrontFaceVertices] = -Utils.RECTANGLE_NORMAL;
+                normals[i] = RectangleMeshUtils.RECTANGLE_NORMAL;
+                normals[i + totalNumberOfFrontFaceVertices] = -RectangleMeshUtils.RECTANGLE_NORMAL;
             }
             return normals;
         }

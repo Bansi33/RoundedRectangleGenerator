@@ -1,4 +1,6 @@
-﻿namespace BanSee.RoundedRectangleGenerator
+﻿using UnityEngine;
+
+namespace BanSee.RoundedRectangleGenerator
 {
     /// <summary>
     /// Static class providing functionality of generating the rectangle mesh data.
@@ -14,10 +16,23 @@
         /// <param name="rectangleGenerationData">Instance of the <see cref="RectangleGenerationData"/>
         /// class containing properties for creation of the rectangle mesh data.</param>
         /// <returns>Reference to the instance of the created <see cref="MeshData"/>
-        /// class, containing information required for creation of the <see cref="UnityEngine.Mesh"/>
-        /// asset for visually representing a rectangle.</returns>
+        /// class, containing information required for creation of the <see cref="Mesh"/>
+        /// asset for visually representing a rectangle. Null if the provided <paramref name="rectangleGenerationData"/>
+        /// is not valid.</returns>
         public static MeshData GenerateRectangleMeshData(RectangleGenerationData rectangleGenerationData)
         {
+            if(rectangleGenerationData == null)
+            {
+                Debug.LogError($"Provided {nameof(RectangleGenerationData)} instance is null! Can't generate rectangle mesh data.");
+                return null;
+            }
+
+            if (!rectangleGenerationData.IsDataValid())
+            {
+                Debug.LogError($"{rectangleGenerationData.ValidationErrorMessage}");
+                return null;
+            }
+
             MeshData rectangleMeshData;
             if (rectangleGenerationData.IsRoundedRectangle)
             {

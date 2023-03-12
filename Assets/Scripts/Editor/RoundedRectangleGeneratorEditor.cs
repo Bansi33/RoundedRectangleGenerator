@@ -48,8 +48,8 @@ namespace BanSee.RoundedRectangleGenerator
             EditorGUI.EndDisabledGroup();
 
             RectangleBorderGenerationData rectangleBorderGenerationData = _roundedRectangleGenerator.RectangleBorderGenerationData;
-            isDataValidForGeneration = rectangleBorderGenerationData.IsDataValid();
-            if (!isDataValidForGeneration)
+            bool isBorderDataValidForGeneration = rectangleBorderGenerationData.IsDataValid();
+            if (!isBorderDataValidForGeneration)
             {
                 // If the data isn't valid for generation of the rectangle border, write out the
                 // message informing the user why the generation isn't currently possible.
@@ -58,7 +58,7 @@ namespace BanSee.RoundedRectangleGenerator
             }
 
             // Drawing area with buttons for generation of rectangle border.
-            EditorGUI.BeginDisabledGroup(!isDataValidForGeneration);
+            EditorGUI.BeginDisabledGroup(!isBorderDataValidForGeneration || !isDataValidForGeneration);
 
             if (GUILayout.Button(nameof(_roundedRectangleGenerator.GenerateRectangleBorder)))
             {

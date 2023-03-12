@@ -125,17 +125,17 @@ namespace BanSee.RoundedRectangleGenerator
 
         public RectangleGenerationData()
         {
-            Width = 1f;
+            Width = 0.25f;
             Height = 1f;
 
             Is3D = false;
-            Depth = 0.2f;
+            Depth = 0.05f;
 
             CornerRoundnessPercentage = 0.1f;
-            CornerVertexCount = 0;
+            CornerVertexCount = 8;
 
             UvMode = UVGenerationMode.AspectRatioFit;
-            TopologyType = RectangleTopologyType.CenterVertexConnection;
+            TopologyType = RectangleTopologyType.CornerConnections;
         }
 
         public RectangleGenerationData(RectangleGenerationData source)
@@ -167,9 +167,11 @@ namespace BanSee.RoundedRectangleGenerator
             }
 
             RectangleGenerationData other = (RectangleGenerationData)obj;
-            return Width == other.Width && Height == other.Height && 
-                Is3D == other.Is3D && Depth == other.Depth && 
-                CornerRoundnessPercentage == other.CornerRoundnessPercentage &&
+            return Mathf.Approximately(Width, other.Width) &&
+                Mathf.Approximately(Height, other.Height) && 
+                Is3D == other.Is3D &&
+                Mathf.Approximately(Depth, other.Depth) &&
+                Mathf.Approximately(CornerRoundnessPercentage, other.CornerRoundnessPercentage) &&
                 CornerVertexCount == other.CornerVertexCount &&
                 UvMode == other.UvMode &&
                 TopologyType == other.TopologyType;

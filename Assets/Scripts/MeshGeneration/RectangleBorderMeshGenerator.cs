@@ -8,7 +8,7 @@ namespace BanSee.RoundedRectangleGenerator
     /// outer edge vertices of the rectangle and expanding them in correct directions based
     /// on the structure of the rectangle.
     /// </summary>
-    public static class RectangleBorderGenerator
+    public static class RectangleBorderMeshGenerator
     {
         /// <summary>
         /// Function generates a 2D rectangle border around the rectangle or rounded rectangle
@@ -30,7 +30,26 @@ namespace BanSee.RoundedRectangleGenerator
         public static MeshData GenerateBorder(RectangleGenerationData rectangleGenerationData,
             RectangleBorderGenerationData rectangleBorderGenerationData)
         {
-            int numberOfOuterVertices = Utils.GetNumberOfFrontFaceOuterVertices(rectangleGenerationData);
+            if(rectangleGenerationData == null || rectangleBorderGenerationData == null)
+            {
+                Debug.LogError($"Both {nameof(RectangleGenerationData)} and {nameof(RectangleBorderGenerationData)} " +
+                    $"references must be provided in order to create border!");
+                return null;
+            }
+
+            if (!rectangleGenerationData.IsDataValid())
+            {
+                Debug.LogError($"{rectangleGenerationData.ValidationErrorMessage}");
+                return null;
+            }
+
+            if (!rectangleBorderGenerationData.IsDataValid())
+            {
+                Debug.LogError($"{rectangleBorderGenerationData.ValidationErrorMessage}");
+                return null;
+            }
+
+            int numberOfOuterVertices = RectangleMeshUtils.GetNumberOfFrontFaceOuterVertices(rectangleGenerationData);
             int totalNumberOfBorderVertices = numberOfOuterVertices * 2;
 
             // Generating vertices based on the outer edge of the rectangle and adding
@@ -41,7 +60,7 @@ namespace BanSee.RoundedRectangleGenerator
             Vector3[] borderNormals = new Vector3[totalNumberOfBorderVertices];
             for(int i = 0; i < totalNumberOfBorderVertices; i++)
             {
-                borderNormals[i] = Utils.RECTANGLE_NORMAL;
+                borderNormals[i] = RectangleMeshUtils.RECTANGLE_NORMAL;
             }
 
             /// Generating UV coordinates.
@@ -89,8 +108,8 @@ namespace BanSee.RoundedRectangleGenerator
             MeshData rectangleMeshData = RectangleMeshGenerator.GenerateRectangleMeshData(rectangleGenerationData);
             Vector3[] rectangleVertices = rectangleMeshData.Vertices;
 
-            int numberOfInnerVertices = Utils.GetNumberOfFrontFaceInnerVertices(rectangleGenerationData);
-            int numberOfOuterVertices = Utils.GetNumberOfFrontFaceOuterVertices(rectangleGenerationData);
+            int numberOfInnerVertices = RectangleMeshUtils.GetNumberOfFrontFaceInnerVertices(rectangleGenerationData);
+            int numberOfOuterVertices = RectangleMeshUtils.GetNumberOfFrontFaceOuterVertices(rectangleGenerationData);
             int totalNumberOfBorderVertices = numberOfOuterVertices * 2;
             Vector3[] borderVertices = new Vector3[totalNumberOfBorderVertices];
 
