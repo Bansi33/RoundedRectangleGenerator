@@ -43,9 +43,9 @@ Tool supports two different ways of connecting the mesh vertices into triangles:
 - "Corner Vertices Connection"
 
 "Center Vertex Connection" topology mode generates the rectangle mesh by connecting all outer vertices with one center vertex located at the local origin of the mesh. This type of topology is suited for circular shapes, but should be avoided for rectangles with large difference between dimensions and with high corner vertex resolution since it will result in creation of long thing triangles which can produce unwanted rendering issues.
-<p float="left">
-  <img src="https://github.com/Bansi33/RoundedRectangleGenerator/blob/examples/ExampleMedia/CenterVertexConnection-Correct.png" width=50% height=50%>
-  <img src="https://github.com/Bansi33/RoundedRectangleGenerator/blob/examples/ExampleMedia/CenterVertexConnection-Wrong.png" width=50% height=50%>
+<p float="center">
+  <img src="https://github.com/Bansi33/RoundedRectangleGenerator/blob/examples/ExampleMedia/CenterVertexConnection-Correct.png" width=25% height=25%>
+  <img src="https://github.com/Bansi33/RoundedRectangleGenerator/blob/examples/ExampleMedia/CenterVertexConnection-Wrong.png" width=45% height=45%>
 </p>
 
 "Corner Vertex Connection" topology mode generates the rectangle mesh by connecting all outer corner vertices with additional vertex that is placed at the center of the circle that was used to construct them. This type of topology produces more vertices than the "Center Vertex Connection" but removes rendering issues caused by the thin long triangles. This type of topology should be used for generating non-circular rectangles with rounded corners.
